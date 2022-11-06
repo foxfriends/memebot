@@ -2,6 +2,7 @@ const fs = require("fs/promises");
 const path = require("path");
 const sharp = require("sharp");
 const { App } = require("@slack/bolt");
+const { findTemplate } = require("./lib");
 const {
   SLACK_SIGNING_SECRET,
   SLACK_BOT_TOKEN,
@@ -21,19 +22,11 @@ function slugify(string) {
   return string.replace(/[^a-zA-Z0-9_-]/, "-").replace(/-+/, "-");
 }
 
-async function findTemplate(name) {
-  try {
-    return require("./templates/" + name);
-  } catch (error) {
-    return null;
-  }
-}
-
 app.command("/meme", async ({ command, ack, say, respond }) => {
   await ack();
 
   const [templateName, ...arguments] = command.text.split(" ");
-  const template = await findTemplate(templateName);
+  const template = findTemplate(templateName);
   if (!template) {
     return respond({
       response_type: "ephemeral",

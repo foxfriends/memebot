@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const fs = require("fs/promises");
+const { findTemplate } = require("./src/lib");
+
+const [_exec, _meme, templateName, ...args] = process.argv;
+const command = [templateName, ...args].join(" ");
+
+const template = findTemplate(templateName);
+if (!template) {
+  console.log(`${templateName} is not a good enough meme, please use a better one.`);
+  process.exit(1);
+}
+
+(async () => {
+  const buffer = await template(command);
+  fs.writeFile("output.png", buffer);
+})();
