@@ -1,6 +1,6 @@
-FROM node:17-alpine
+FROM node:17
 
-RUN apt install fontconfig
+RUN apt-get install fontconfig
 
 WORKDIR /app
 COPY package.json package-lock.json ./
