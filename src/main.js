@@ -7,14 +7,14 @@ const {
   SLACK_SIGNING_SECRET,
   SLACK_BOT_TOKEN,
   SLACK_APP_TOKEN,
+  IS_DEV,
 } = require("./env");
 
 const app = new App({
   signingSecret: SLACK_SIGNING_SECRET,
   token: SLACK_BOT_TOKEN,
   appToken: SLACK_APP_TOKEN,
-  socketMode: true,
-  developerMode: true,
+  developerMode: IS_DEV,
   port: 3000,
 });
 
