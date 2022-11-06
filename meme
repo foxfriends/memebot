@@ -13,6 +13,16 @@ if (!template) {
 }
 
 (async () => {
-  const buffer = await template(command);
+  let buffer;
+  try {
+    buffer = await template(command);
+    if (!(buffer instanceof Buffer)) {
+      throw new Error("Template did not return a Buffer");
+    }
+  } catch (error) {
+    console.log(error.message);
+    process.exit(2);
+  }
+
   fs.writeFile("output.png", buffer);
 })();
