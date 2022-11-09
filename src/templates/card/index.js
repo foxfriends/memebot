@@ -1,6 +1,7 @@
 const sharp = require("sharp");
 const got = require("got");
 const { complement, startsWith } = require("ramda");
+const { parseArgs } = require("../../lib/args");
 
 async function loadCard(tokenId) {
   try {
@@ -13,21 +14,17 @@ async function loadCard(tokenId) {
 }
 
 module.exports = async (command) => {
-  const [, ...args] = command.split(" ");
+  const [args, params] = parseArgs(command);
 
   const imageBuffer = sharp();
 
-  const fromCard = args.find(startsWith("from:"))?.slice(5) ?? "7";
+  const fromCard = params.name?.slice(5) ?? "7";
   const card = await loadCard(fromCard);
   got.stream(card.image_url).pipe(imageBuffer);
 
   const composites = [];
 
-  const title = args
-    .filter((x) => x)
-    .filter(complement(startsWith("from:")))
-    .filter(complement(startsWith("image:")))
-    .join(" ");
+  const title = args.join(" ");
   if (title) {
     const nameImage = Buffer.from(`
       <svg width="600" height="900">
@@ -43,7 +40,7 @@ module.exports = async (command) => {
     });
   }
 
-  const newImage = args.find(startsWith("image:"))?.slice(6);
+  const newImage = params.image?.slice(6);
   if (newImage) {
     const crop = sharp();
 
